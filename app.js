@@ -6,11 +6,7 @@
         }
     })());
 
-const model = {
-    // Create Human Object
-    human: null,
-    // Create Dino Objects
-    dinosMetadata: [
+    const dinosMetadata = [
         {
             species: "Triceratops",
             weight: 13000,
@@ -19,6 +15,7 @@ const model = {
             where: "North America",
             when: "Late Cretaceous",
             fact: "First discovered in 1889 by Othniel Charles Marsh",
+            imgSrc: 'images/triceratops.png'
         },
         {
             species: "Tyrannosaurus Rex",
@@ -83,7 +80,13 @@ const model = {
             when: "Holocene",
             fact: "All birds are living dinosaurs."
         }
-    ],
+    ];
+
+const model = {
+    // Create Human Object
+    human: null,
+    // Create Dino Objects
+    dinosaurs: [],
     // Create Dino Constructor
     Dinosaur: function(species, imageSrc, fact) {
         this.species = species;
@@ -94,17 +97,51 @@ const model = {
 
 const octopus = {
     init: function () {
-        // set up model
-
         // grab data from form and hide it
         formView.init();
-        // initialize model to display animals in the grid
+        // initialize view to display animals in the grid
         infographicView.init();
+    },
+
+    getRandomFact: function(dinoMetaData) {
+
+    },
+
+    convertFeetInchesToInches: function(feet, inches) {
+        return (feet * 12) + inches;
+    },
+
+    getDinosaurs: function() {
+        return model.dinosaurs;
+    },
+
+    setDinosaurs: function (dinosaursData) {
+        for (let i = 0; i < dinosaursData.length; i++) {
+            const currentDinoData = dinosaursData[i];
+            const dinosaur = new model.Dinosaur(
+                currentDinoData.species,
+                currentDinoData.imgSrc,
+                this.getRandomFact(currentDinoData)
+            );
+            model.dinosaurs.push(dinosaur);
+        }
+    },
+
+    getHuman: function() {
+        return model.human;
+    },
+
+    setHuman: function(human) {
+        model.human = human;
     }
+
 }
 
 const formView = {
         init: function() {
+            //get reference to form
+            this.form = document.getElementById('dino-compare');
+
             // store human properties from user's input
             this.userName = document.getElementById('name');
             this.heightFeet = document.getElementById('feet');
@@ -117,19 +154,29 @@ const formView = {
             console.log(`weight ${this.weight.value}`);
             console.log(`diet ${this.diet.value}`);
 
-            //get reference to form
-            this.form = document.getElementById('dino-compare');
+            octopus.setHuman({
+                name: this.userName.value,
+                height: octopus.convertFeetInchesToInches(
+                    this.heightFeet.value,
+                    this.heightInches.value
+                ),
+                weight: this.weight.value,
+                diet: this.diet,
+                imgSrc: 'images/human.png'
+            });
+
             this.render();
         },
 
         render: function() {
-            // hide form
             this.form.style.display = 'none';
         }
     };
 
 const infographicView = {
         init: function() {
+            octopus.setDinosaurs(dinosMetadata);
+
             this.grid = document.getElementById('grid');
             this.render();
         },
