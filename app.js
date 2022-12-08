@@ -1,4 +1,3 @@
-    // Use IIFE to get human data from form
     const compareBtn = document.getElementById('btn');
     compareBtn.addEventListener('click', (function() {
         return function() {
@@ -104,12 +103,9 @@ const model = {
 
 const octopus = {
     init: function () {
-        // save data from form input and hide it
         formView.init();
-        // initialize view to display animals in the grid
         infographicView.init();
     },
-
     getRandomFactForDinosaur: function(dinoMetaData) {
         const human = this.getHuman();
         const compareFunctions = [
@@ -120,7 +116,6 @@ const octopus = {
             this.getHabitat(dinoMetaData),
             this.getTimeOfPresence(dinoMetaData)
         ];
-
         return compareFunctions[Math.floor(Math.random() * compareFunctions.length)];
     },
 
@@ -161,15 +156,12 @@ const octopus = {
             return `${dinosaur.species} were heavier than a human`
         }
     },
-
     convertFeetInchesToInches: function(feet, inches) {
         return (feet * 12) + inches;
     },
-
     getDinosaurs: function() {
         return model.dinosaurs;
     },
-
     setDinosaurs: function (dinosaursData) {
         for (let i = 0; i < dinosaursData.length; i++) {
             const currentDinoData = dinosaursData[i];
@@ -183,20 +175,16 @@ const octopus = {
             model.dinosaurs.push(dinosaur);
         }
     },
-
     getHuman: function() {
         return model.human;
     },
-
     setHuman: function(human) {
         model.human = human;
     }
-
 }
 
 const formView = {
         init: function() {
-            //get reference to form
             this.form = document.getElementById('dino-compare');
 
             // store human properties from user's input
@@ -216,10 +204,8 @@ const formView = {
                 diet: this.diet.value,
                 imgSrc: 'images/human.png'
             });
-
             this.render();
         },
-
         render: function() {
             this.form.style.display = 'none';
         }
@@ -233,12 +219,13 @@ const infographicView = {
 
         render: function() {
             this.grid = document.getElementById('grid');
-            let dinosaurs = octopus.getDinosaurs();
-            let human = octopus.getHuman();
+            const dinosaurs = octopus.getDinosaurs();
+            const human = octopus.getHuman();
             const tilesCount = 9;
+            let currentDinoCount = 0;
 
             for (let i = 1; i <= tilesCount; i++) {
-                let currentDino;
+                let currentDino = dinosaurs[currentDinoCount];
                 let gridItem = document.createElement('div');
                 gridItem.className = 'grid-item';
 
@@ -250,8 +237,8 @@ const infographicView = {
                     speciesNameEl.textContent = human.name;
                     speciesImgEl.src = human.imgSrc;
                     speciesFactEl.textContent = '';
+                    currentDinoCount --;
                 } else {
-                    currentDino = dinosaurs[i - 1];
                     speciesNameEl.textContent = currentDino.species;
                     speciesImgEl.src = currentDino.imgSrc;
                     speciesFactEl.textContent = currentDino.fact;
@@ -261,8 +248,7 @@ const infographicView = {
                 gridItem.appendChild(speciesImgEl);
                 gridItem.appendChild(speciesFactEl);
                 this.grid.appendChild(gridItem);
+                currentDinoCount ++;
             }
-
-
         }
     };
