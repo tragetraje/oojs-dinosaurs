@@ -15,7 +15,7 @@
             where: "North America",
             when: "Late Cretaceous",
             fact: "First discovered in 1889 by Othniel Charles Marsh",
-            imgSrc: 'images/triceratops.png'
+            imgSrc: "images/triceratops.png"
         },
         {
             species: "Tyrannosaurus Rex",
@@ -24,7 +24,8 @@
             diet: "carnivor",
             where: "North America",
             when: "Late Cretaceous",
-            fact: "The largest known skull measures in at 5 feet long."
+            fact: "The largest known skull measures in at 5 feet long.",
+            imgSrc: 'images/tyrannosaurus rex.png'
         },
         {
             species: "Anklyosaurus",
@@ -33,7 +34,8 @@
             diet: "herbavor",
             where: "North America",
             when: "Late Cretaceous",
-            fact: "Anklyosaurus survived for approximately 135 million years."
+            fact: "Anklyosaurus survived for approximately 135 million years.",
+            imgSrc: 'images/anklyosaurus.png'
         },
         {
             species: "Brachiosaurus",
@@ -42,7 +44,8 @@
             diet: "herbavor",
             where: "North America",
             when: "Late Jurasic",
-            fact: "An asteroid was named 9954 Brachiosaurus in 1991."
+            fact: "An asteroid was named 9954 Brachiosaurus in 1991.",
+            imgSrc: 'images/brachiosaurus.png'
         },
         {
             species: "Stegosaurus",
@@ -51,7 +54,8 @@
             diet: "herbavor",
             where: "North America, Europe, Asia",
             when: "Late Jurasic to Early Cretaceous",
-            fact: "The Stegosaurus had between 17 and 22 seperate places and flat spines."
+            fact: "The Stegosaurus had between 17 and 22 seperate places and flat spines.",
+            imgSrc: 'images/stegosaurus.png'
         },
         {
             species: "Elasmosaurus",
@@ -60,7 +64,8 @@
             diet: "carnivor",
             where: "North America",
             when: "Late Cretaceous",
-            fact: "Elasmosaurus was a marine reptile first discovered in Kansas."
+            fact: "Elasmosaurus was a marine reptile first discovered in Kansas.",
+            imgSrc: 'images/elasmosaurus.png'
         },
         {
             species: "Pteranodon",
@@ -69,7 +74,8 @@
             diet: "carnivor",
             where: "North America",
             when: "Late Cretaceous",
-            fact: "Actually a flying reptile, the Pteranodon is not a dinosaur."
+            fact: "Actually a flying reptile, the Pteranodon is not a dinosaur.",
+            imgSrc: 'images/pteranodon.png'
         },
         {
             species: "Pigeon",
@@ -78,7 +84,8 @@
             diet: "herbavor",
             where: "World Wide",
             when: "Holocene",
-            fact: "All birds are living dinosaurs."
+            fact: "All birds are living dinosaurs.",
+            imgSrc: 'images/pigeon.png'
         }
     ];
 
@@ -90,21 +97,69 @@ const model = {
     // Create Dino Constructor
     Dinosaur: function(species, imageSrc, fact) {
         this.species = species;
-        this.imageSrc = imageSrc;
+        this.imgSrc = imageSrc;
         this.fact = fact;
     }
 }
 
 const octopus = {
     init: function () {
-        // grab data from form and hide it
+        // save data from form input and hide it
         formView.init();
         // initialize view to display animals in the grid
         infographicView.init();
     },
 
-    getRandomFact: function(dinoMetaData) {
+    getRandomFactForDinosaur: function(dinoMetaData) {
+        const human = this.getHuman();
+        const compareFunctions = [
+            this.compareDiets(dinoMetaData, human),
+            this.compareHeights(dinoMetaData, human),
+            this.compareWeights(dinoMetaData, human),
+            this.getDinosaurFact(dinoMetaData),
+            this.getHabitat(dinoMetaData),
+            this.getTimeOfPresence(dinoMetaData)
+        ];
 
+        return compareFunctions[Math.floor(Math.random() * compareFunctions.length)];
+    },
+
+    getDinosaurFact: function(dinosaur) {
+        return `${dinosaur.fact}`;
+    },
+
+    getHabitat: function(dinosaur) {
+        return `Their habitat was ${dinosaur.where}`;
+    },
+
+    getTimeOfPresence: function(dinosaur) {
+        return `Lived in ${dinosaur.when}`;
+    },
+
+    compareDiets: function(dinosaur, human) {
+        if (dinosaur.diet === human.diet) {
+            return `Both humans and ${dinosaur.species} had same diets`
+        } else {
+            return `${dinosaur.species} consumed ${dinosaur.diet} diet`;
+        }
+    },
+    compareHeights: function(dinosaur, human) {
+        if (dinosaur.height === human.height) {
+            return `${dinosaur.species} were as high as humans`;
+        } else if (dinosaur.height < human.height) {
+            return `${dinosaur.species} were tiny`;
+        } else {
+            return `${dinosaur.species} were taller than a human`
+        }
+    },
+    compareWeights: function(dinosaur, human) {
+        if (dinosaur.weight === human.weight) {
+            return `${dinosaur.species} were as heavy as humans`;
+        } else if (dinosaur.weight < human.weight) {
+            return `${dinosaur.species} were light as a feather`;
+        } else {
+            return `${dinosaur.species} were heavier than a human`
+        }
     },
 
     convertFeetInchesToInches: function(feet, inches) {
@@ -121,7 +176,9 @@ const octopus = {
             const dinosaur = new model.Dinosaur(
                 currentDinoData.species,
                 currentDinoData.imgSrc,
-                this.getRandomFact(currentDinoData)
+                currentDinoData.species === 'Pigeon' ?
+                    currentDinoData.fact :
+                    this.getRandomFactForDinosaur(currentDinoData)
             );
             model.dinosaurs.push(dinosaur);
         }
@@ -148,11 +205,6 @@ const formView = {
             this.heightInches = document.getElementById('inches');
             this.weight = document.getElementById('weight');
             this.diet = document.getElementById('diet');
-            console.log(`name ${this.userName.value}`);
-            console.log(`feet ${this.heightFeet.value}`);
-            console.log(`inches ${this.heightInches.value}`);
-            console.log(`weight ${this.weight.value}`);
-            console.log(`diet ${this.diet.value}`);
 
             octopus.setHuman({
                 name: this.userName.value,
@@ -161,7 +213,7 @@ const formView = {
                     this.heightInches.value
                 ),
                 weight: this.weight.value,
-                diet: this.diet,
+                diet: this.diet.value,
                 imgSrc: 'images/human.png'
             });
 
@@ -176,47 +228,41 @@ const formView = {
 const infographicView = {
         init: function() {
             octopus.setDinosaurs(dinosMetadata);
-
-            this.grid = document.getElementById('grid');
             this.render();
         },
 
         render: function() {
+            this.grid = document.getElementById('grid');
+            let dinosaurs = octopus.getDinosaurs();
+            let human = octopus.getHuman();
+            const tilesCount = 9;
+
+            for (let i = 1; i <= tilesCount; i++) {
+                let currentDino;
+                let gridItem = document.createElement('div');
+                gridItem.className = 'grid-item';
+
+                let speciesNameEl = document.createElement('h3');
+                let speciesImgEl = document.createElement('img');
+                let speciesFactEl = document.createElement('p');
+
+                if (i === 5) {
+                    speciesNameEl.textContent = human.name;
+                    speciesImgEl.src = human.imgSrc;
+                    speciesFactEl.textContent = '';
+                } else {
+                    currentDino = dinosaurs[i - 1];
+                    speciesNameEl.textContent = currentDino.species;
+                    speciesImgEl.src = currentDino.imgSrc;
+                    speciesFactEl.textContent = currentDino.fact;
+                }
+
+                gridItem.appendChild(speciesNameEl);
+                gridItem.appendChild(speciesImgEl);
+                gridItem.appendChild(speciesFactEl);
+                this.grid.appendChild(gridItem);
+            }
+
 
         }
     };
-
-// Create Dino Compare Method 1
-// NOTE: Weight in JSON file is in lbs, height in inches.
-
-
-// Create Dino Compare Method 2
-// NOTE: Weight in JSON file is in lbs, height in inches.
-
-
-// Create Dino Compare Method 3
-// NOTE: Weight in JSON file is in lbs, height in inches.
-
-
-// Generate Tiles for each Dino in Array
-
-    // Add tiles to DOM
-
-// Remove form from screen
-
-
-// On button click, prepare and display infographic
-
-// Viewmodel for each of the displayed objects:
-// species
-// image
-// random fact per dinosaur (6 different types of facts, 3 should be
-// from methods you create)
-
-// Note: Human (in the center of the grid)
-// display name
-// doesn't need to have a fact
-// Pigeon: always displays the same fact "All birds are dinosaurs"
-
-// 3x3 grid of tiles
-// human in the center
