@@ -133,7 +133,7 @@ const octopus = {
 
     compareDiets: function(dinosaur, human) {
         if (dinosaur.diet === human.diet) {
-            return `Both humans and ${dinosaur.species} had same diets`
+            return `Both you and ${dinosaur.species} have same diets`
         } else {
             return `${dinosaur.species} consumed ${dinosaur.diet} diet`;
         }
@@ -165,14 +165,25 @@ const octopus = {
     setDinosaurs: function (dinosaursData) {
         for (let i = 0; i < dinosaursData.length; i++) {
             const currentDinoData = dinosaursData[i];
-            const dinosaur = new model.Dinosaur(
-                currentDinoData.species,
-                currentDinoData.imgSrc,
-                currentDinoData.species === 'Pigeon' ?
-                    currentDinoData.fact :
+            
+            if (currentDinoData.species === 'Pigeon') {
+                const bird = Object.assign(
+                    {}, 
+                    new model.Dinosaur(
+                        currentDinoData.species,
+                        currentDinoData.imgSrc,
+                        currentDinoData.fact
+                    )
+                );
+                model.dinosaurs.push(bird);
+            } else {
+                const dinosaur = new model.Dinosaur(
+                    currentDinoData.species,
+                    currentDinoData.imgSrc,
                     this.getRandomFactForDinosaur(currentDinoData)
-            );
-            model.dinosaurs.push(dinosaur);
+                );
+                model.dinosaurs.push(dinosaur);
+            }
         }
     },
     getHuman: function() {
@@ -233,6 +244,7 @@ const infographicView = {
                 let speciesImgEl = document.createElement('img');
                 let speciesFactEl = document.createElement('p');
 
+                // place human in the center of the grid
                 if (i === 5) {
                     speciesNameEl.textContent = human.name;
                     speciesImgEl.src = human.imgSrc;
